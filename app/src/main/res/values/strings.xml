@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Instant_Message</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="chatContent">聊天内容</string>
+</resources>

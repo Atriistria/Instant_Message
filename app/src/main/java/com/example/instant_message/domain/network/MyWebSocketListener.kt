@@ -2,6 +2,7 @@ package com.example.instant_message.domain.util
 
 import android.util.Log
 import com.alibaba.fastjson.JSONObject
+import com.example.instant_message.AppLifecycleTracker
 import com.example.instant_message.domain.entity.MessageResponse
 import com.example.instant_message.domain.manager.WebSocketManager
 import com.example.instant_message.domain.network.WebSocketEventListener
@@ -30,7 +31,11 @@ class MyWebSocketListener(
             val content = json.getString("content")
             val timestamp = json.getLong("timestamp")
             Log.d("MyWebSocketListener", "onMessage: $json")
-
+            if(AppLifecycleTracker.isAppInForeground){
+                if (sender != "client"){
+                    showNotification(sender,content)
+                }
+            }
             when(type){
                 "chat" -> {
                     EventBus.getDefault().post(MessageResponse(content, sender, type, recipient, timestamp))
@@ -53,6 +58,10 @@ class MyWebSocketListener(
             Log.d("MyWebSocketListener", "onMessage: $e")
         }
         listener.onMessage(text)
+    }
+
+    private fun showNotification(sender: String?, content: String?) {
+
     }
 
     override fun onMessage(webSocket: WebSocket, bytes: ByteString){

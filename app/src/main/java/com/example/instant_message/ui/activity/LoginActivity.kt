@@ -50,10 +50,10 @@ class LoginActivity: AppCompatActivity() {
            if (result.success) {
                if (!isServiceRunning(WebSocketService::class.java)) {
                    startService(serviceIntent)
+                   Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show()
                }
-               Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show()
                sessionManager.setLoggedIn(true)
-               startActivity(Intent(this, ChatActivity::class.java))
+               startActivity(Intent(this, MainActivity::class.java))
            } else {
                // 登录失败，显示错误信息
                Toast.makeText(this, "登录失败了: ${result.errorMessage}", Toast.LENGTH_SHORT).show()

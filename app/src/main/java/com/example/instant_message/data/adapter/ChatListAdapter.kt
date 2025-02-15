@@ -25,7 +25,6 @@ class ChatListAdapter(private val clickListener: (ChatListItem)-> Unit) : ListAd
         val lastMessageTime: TextView = itemView.findViewById(R.id.tv_list_last_message_time)
     }
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatListViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_chat_list,parent,false)
         return ChatListViewHolder(view)
@@ -54,13 +53,13 @@ class ChatListAdapter(private val clickListener: (ChatListItem)-> Unit) : ListAd
         }
 
         override fun areContentsTheSame(oldItem: ChatListItem, newItem: ChatListItem): Boolean {
-            return oldItem.chatName == newItem.chatName &&
-                    oldItem.lastMessage == newItem.lastMessage &&
+            return oldItem.lastMessage == newItem.lastMessage &&
                     oldItem.lastMessageTime == newItem.lastMessageTime
         }
     }
     fun updateChatList(newList: List<ChatListItem>) {
-        submitList(newList)
+        val filteredList = newList.filter { !it.isClient }
+        submitList(filteredList)
     }
 
 }

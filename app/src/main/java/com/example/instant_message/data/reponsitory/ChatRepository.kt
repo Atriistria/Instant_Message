@@ -79,5 +79,9 @@ class ChatRepository(
         return database.chatDao().getAllMessages()
     }
 
+    suspend fun getChatHistoryBySender(sender: String): List<MessageEntity> {
+        return database.chatDao().getMessagesBySender(sender)
+    }
+
 
 }

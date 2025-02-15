@@ -43,6 +43,8 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.emoji2.emojipicker)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.lifecycle.process)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -64,6 +66,7 @@ dependencies {
     kapt (libs.androidx.room.room.compiler3)
     implementation(libs.glide)
     kapt(libs.glide.compiler)
+    implementation(libs.work.runtime.ktx.v271)
 
 
 }

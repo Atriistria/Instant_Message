@@ -2,7 +2,7 @@ package com.example.instant_message.domain.manager
 
 
 import android.util.Log
-import com.example.instant_message.domain.util.MyWebSocketListener
+import com.example.instant_message.domain.network.MyWebSocketListener
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket

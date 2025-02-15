@@ -1,7 +1,6 @@
 package com.example.instant_message.ui.fragment
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.instant_message.AppDatabase
@@ -23,10 +21,8 @@ import com.example.instant_message.domain.entity.ChatItem
 import com.example.instant_message.domain.entity.MessageRequest
 import com.example.instant_message.domain.manager.SessionManager
 import com.example.instant_message.domain.util.WebsocketEvent.SEND_FRIEND_MESSAGE
-import com.example.instant_message.ui.activity.LoginActivity
 
 
-//TODO()
 class ChatFragment: Fragment() {
 
     private var _binding: FragmentChatBinding? =null
@@ -40,6 +36,8 @@ class ChatFragment: Fragment() {
         val repository = ChatRepository(database)
         ChatViewModelFactory(repository)
     }
+
+    private var chatName: String? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -57,18 +55,27 @@ class ChatFragment: Fragment() {
         chatViewAdapter = ChatViewAdapter()
         recyclerView.adapter = chatViewAdapter
 
+        arguments?.let {
+            chatName = it.getString("chatName")
+            Log.d("ChatFragment", "onCreate: $chatName")
+        }
         viewmodel.chatItems.observe(viewLifecycleOwner){ newItems ->
             chatViewAdapter.submitList(newItems)
         }
         return binding.root
     }
 
-
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("chatName", chatName)
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        arguments?.getString("chatName")?.let { chatName ->
-//            binding.toolbarTitle.text = chatName
-//        }
+
+        chatName?.let {
+            binding.toolbarTitle.text = it
+            viewmodel.loadChatHistory(it)
+        }
         setupClickListeners()
     }
 
@@ -81,7 +88,7 @@ class ChatFragment: Fragment() {
                     event = SEND_FRIEND_MESSAGE,
                     content = messageContent,
                     sender = sessionManager.getUsername()!!,
-                    recipient = "atride"
+                    recipient = chatName!!
                 )
                 Log.d("ChatFragment", "sendMessage: $messageRequest")
                 viewmodel.sendMessage(messageRequest)
@@ -113,14 +120,12 @@ class ChatFragment: Fragment() {
 //        binding.actionButton.setOnClickListener{
 //
 //        }
-        binding.toolbarChat.title = "Chat"
+
         binding.toolbarChat.setNavigationOnClickListener {
-            startActivity(Intent(requireContext(),LoginActivity::class.java))
-            sessionManager.clearSession()
+            requireActivity().finish()
         }
 
     }
-
 
     override fun onDestroy() {
         super.onDestroy()

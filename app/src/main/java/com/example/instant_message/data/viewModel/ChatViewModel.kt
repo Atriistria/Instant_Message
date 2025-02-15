@@ -20,7 +20,6 @@ import org.greenrobot.eventbus.ThreadMode
 
 class ChatViewModel(
     private val repository: ChatRepository
-
 ) : ViewModel() {
 
     private val _content = MutableLiveData<String>()
@@ -34,16 +33,14 @@ class ChatViewModel(
     private val _chatListItems = MutableLiveData<List<ChatListItem>>()
     val chatListItems: LiveData<List<ChatListItem>> get() = _chatListItems
 
-
+    private val userChatHistory = mutableMapOf<String, List<ChatItem>>()
 
     init {
         _chatItems.value = mutableListOf()
         _chatListItems.value = mutableListOf()
         EventBus.getDefault().register(this)
-        loadChatHistory()
+        loadChatList()
     }
-
-
 
     fun sendMessage(message: MessageRequest){
         viewModelScope.launch {
@@ -71,7 +68,6 @@ class ChatViewModel(
         }
         message?.let {
             repository.saveMessage(it)
-
         }
 
         Log.d("ChatViewModel", "onMessageEvent: ${event.content}")
@@ -79,7 +75,6 @@ class ChatViewModel(
         if (event.content.isNotEmpty()) {
             val sender = if (event.sender == "atri") "self" else "other"
             currentItems.add(ChatItem(0, R.drawable.ic_me, event.content, sender))
-            Log.d("ChatViewModel", "onMessageEvent: ${event.content}")
             _chatItems.postValue(currentItems)
 
             val currentListItems = _chatListItems.value?.toMutableList() ?: mutableListOf()
@@ -92,6 +87,7 @@ class ChatViewModel(
                     lastMessageTime = event.timestamp,
                     isGroupChat = event.type == "group",
                     avatarUrl = R.drawable.ic_me,
+                    isClient = event.type == "system",
                     senderName = event.sender,
                 )
             }else{
@@ -101,6 +97,7 @@ class ChatViewModel(
                     lastMessage = event.content,
                     lastMessageTime = event.timestamp,
                     isGroupChat = event.type == "group",
+                    isClient = event.type == "system",
                     avatarUrl = R.drawable.ic_me,
                     senderName = event.sender,
                 )
@@ -118,19 +115,29 @@ class ChatViewModel(
         _chatItems.value = currentItems
     }
 
-    private fun loadChatHistory() {
+    fun loadChatHistory(username: String) {
+        if(userChatHistory.containsKey(username)){
+            _chatItems.value = userChatHistory[username]
+            return
+        }
         viewModelScope.launch {
-            val message = repository.getChatHistory()
-            val chatItemsList = message.map{
+            val message = repository.getChatHistoryBySender(username)
+            val chatItemsList = message.sortedBy { it.timestamp }.map{
+                val sender = if (it.sender == "self") "self" else "other"
                 ChatItem(
                     id = it.id,
                     message = it.content,
-                    sender = if (it.sender == "self") "self" else "other"
+                    sender = sender
                 )
             }
+            userChatHistory[username] = chatItemsList
             _chatItems.value = chatItemsList
-
-            val chatListItemsList = message.groupBy {  it.sender }.map { (sender, messages) ->
+        }
+    }
+    private fun loadChatList(){
+        viewModelScope.launch {
+            val message = repository.getChatHistory()
+            val chatListItemsList = message.groupBy { it.sender }.map { (sender, messages) ->
                 val lastMessage = messages.maxByOrNull { it.timestamp }!!
                 ChatListItem(
                     chatId = 0,
@@ -139,6 +146,7 @@ class ChatViewModel(
                     lastMessageTime = lastMessage.timestamp,
                     isGroupChat = lastMessage.type == "group",
                     senderName = sender,
+                    isClient = lastMessage.type == "system",
                     avatarUrl = R.drawable.ic_me
                 )
             }

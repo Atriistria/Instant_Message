@@ -12,7 +12,7 @@
         android:id="@+id/toolbar_chat"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="#EDEDED"
         android:elevation="4dp"
         app:navigationIcon="@drawable/img"
         tools:ignore="MissingConstraints">
@@ -51,7 +51,7 @@
         android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
         android:layout_height="55dp"
-        android:background="#DCF8EDED"
+        android:background="#EDEDED"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -62,32 +62,39 @@
             android:layout_height="43dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:autofillHints=""
             android:background="@drawable/edit_chat"
+            android:inputType="textMultiLine"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/send"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="LabelFor" />
 
         <Button
             android:id="@+id/send"
             android:layout_width="63dp"
             android:layout_height="40dp"
             android:layout_marginEnd="8dp"
-            android:text="sen"
+            android:text="@string/img"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/file"
+            app:layout_constraintHorizontal_bias="0.976"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.4" />
+            app:layout_constraintVertical_bias="0.6" />
 
         <Button
             android:id="@+id/file"
             android:layout_width="42dp"
             android:layout_height="37dp"
-            android:text="+"
+            android:text="@string/more"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.986"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

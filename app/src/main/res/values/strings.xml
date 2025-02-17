@@ -5,4 +5,7 @@
     <string name="login">Login</string>
     <string name="register">Register</string>
     <string name="chatContent">聊天内容</string>
+    <string name="weixin">微信</string>
+    <string name="img">img</string>
+    <string name="more">+</string>
 </resources>

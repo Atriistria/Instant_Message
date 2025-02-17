@@ -1,12 +1,15 @@
 package com.example.instant_message.ui.activity
 
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Window
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.instant_message.MainActivity
+import com.example.instant_message.R
 import com.example.instant_message.domain.network.ApiClient
 import com.example.instant_message.data.factory.LoginViewModelFactory
 import com.example.instant_message.data.reponsitory.UserRepository
@@ -27,26 +30,21 @@ class LoginActivity: AppCompatActivity() {
     }
 
     private val serviceIntent by lazy { Intent(this, WebSocketService::class.java) }
-
-    override fun onStart() {
-        super.onStart()
-        sessionManager.isLoggedIn().observe(this) { isLoggedIn ->
-            if (isLoggedIn) {
-                if (!isServiceRunning(WebSocketService::class.java)) {
-                    startService(serviceIntent)
-                }
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
-            }
-        }
-    }
+    private lateinit var loadingDialog: Dialog
 
    override fun onCreate(savedInstanceState: Bundle?) {
        super.onCreate(savedInstanceState)
        binding = ActivityLoginBinding.inflate(layoutInflater)
        setContentView(binding.root)
 
+       loadingDialog = Dialog(this).apply {
+           requestWindowFeature(Window.FEATURE_NO_TITLE)
+           setContentView(R.layout.loading_dialog)
+           setCancelable(false)
+       }
+
        viewModel.loginResult.observe(this) { result ->
+           loadingDialog.dismiss()
            if (result.success) {
                if (!isServiceRunning(WebSocketService::class.java)) {
                    startService(serviceIntent)
@@ -64,6 +62,7 @@ class LoginActivity: AppCompatActivity() {
            val password = binding.passwordInputLogin.text.toString()
 
            if (username.isNotEmpty() && password.isNotEmpty()){
+               loadingDialog.show()
                viewModel.login(username, password)
            } else {
                Toast.makeText(this, "Please enter username and password", Toast.LENGTH_SHORT).show()
@@ -75,6 +74,7 @@ class LoginActivity: AppCompatActivity() {
        }
    }
 
+
     private fun isServiceRunning(serviceClass: Class<*>): Boolean {
         val manager = getSystemService(ACTIVITY_SERVICE) as android.app.ActivityManager
         for (service in manager.getRunningServices(Int.MAX_VALUE)) {
@@ -83,7 +83,6 @@ class LoginActivity: AppCompatActivity() {
             }
         }
         return false
-
     }
 
     override fun onResume() {

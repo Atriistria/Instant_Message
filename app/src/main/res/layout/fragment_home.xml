@@ -9,18 +9,22 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:layout_height="49dp"
+        android:background="#EDEDED"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="微信"
-        app:titleTextColor="@android:color/white" />
+        tools:layout_editor_absoluteX="2dp">
 
-    <!-- 聊天消息列表 -->
-
-    <!-- 底部输入框区域 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/weixin"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+    </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/home_rv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
